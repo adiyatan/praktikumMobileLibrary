@@ -23,29 +23,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import id.ac.unpas.agenda.R
-import id.ac.unpas.agenda.models.Todo
+import id.ac.unpas.agenda.models.Book
 import id.ac.unpas.agenda.ui.composables.ConfirmationDialog
 import id.ac.unpas.agenda.ui.theme.Yellow60
 import kotlinx.coroutines.launch
 import androidx.navigation.NavController
 
 @Composable
-fun BookScreen(navController: NavController, modifier: Modifier = Modifier, onDelete: () -> Unit, onClick: (String) -> Unit) {
+fun BookScreen(navController: NavController, modifier: Modifier = Modifier) {
 
-    val scope = rememberCoroutineScope()
-    val viewModel = hiltViewModel<TodoViewModel>()
-
-    val list: List<Todo> by viewModel.todos.observeAsState(listOf())
-    val title = remember { mutableStateOf("TODO") }
-    val openDialog = remember {
-        mutableStateOf(false)
-    }
-    val activeId = remember {
-        mutableStateOf("")
-    }
-    val deleting = remember {
-        mutableStateOf(false)
-    }
     Column(modifier = modifier.fillMaxWidth()) {
         Box(
             modifier = Modifier
@@ -65,46 +51,8 @@ fun BookScreen(navController: NavController, modifier: Modifier = Modifier, onDe
         MenuCard(
             title = "Peminjaman Buku",
             iconId = R.drawable.book,
-            onClick = {navController.navigate(NavScreen.Loan.route) }
+            onClick = {navController.navigate(NavScreen.Request.route) }
         )
-        LazyColumn(modifier = Modifier.fillMaxWidth()) {
-            items(list.size) { index ->
-                val item = list[index]
-                TodoItem(item = item, onEditClick = { id ->
-                    onClick(id)
-                }, onDeleteClick = { id ->
-                    deleting.value = true
-                    activeId.value = id
-                    openDialog.value = true
-                })
-            }
-        }
-    }
-
-    if (openDialog.value) {
-        ConfirmationDialog(onDismiss = {
-            openDialog.value = false
-        }) {
-            scope.launch {
-                viewModel.delete(activeId.value)
-            }
-            openDialog.value = false
-        }
-    }
-
-    viewModel.isLoading.observe(LocalLifecycleOwner.current) {
-        if (it) {
-            title.value = "Loading..."
-        } else {
-            title.value = "TODO"
-        }
-    }
-
-    viewModel.isDeleted.observe(LocalLifecycleOwner.current) {
-        if (deleting.value && it) {
-            deleting.value = false
-            onDelete()
-        }
     }
 }
 

@@ -49,10 +49,10 @@ fun LoginScreen(modifier: Modifier = Modifier, onLoginClick: () -> Unit) {
         Column(
             modifier = Modifier
                 .padding(20.dp)
-                .fillMaxWidth(),
+                .fillMaxWidth()
         ) {
             Image(painter = painterResource(id = R.drawable.logo), contentDescription = "Login Logo", modifier = Modifier
-                .width(500.dp),)
+                .width(500.dp).height(200.dp),)
         }
 
         // Input fields and buttons section

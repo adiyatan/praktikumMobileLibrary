@@ -165,7 +165,7 @@ fun MainScreen(onExitClick: () -> Unit) {
                             Image(
                                 painter = painterResource(id = R.drawable.baseline_book_24),
                                 contentDescription = "Tambah",
-                                colorFilter = if (currentRoute.value == NavScreen.Menu.route || currentRoute.value == NavScreen.Book.route || currentRoute.value == NavScreen.Loan.route) ColorFilter.tint(Blue40) else ColorFilter.tint(Gray40),
+                                colorFilter = if (currentRoute.value == NavScreen.Menu.route || currentRoute.value == NavScreen.Book.route || currentRoute.value == NavScreen.Request.route) ColorFilter.tint(Blue40) else ColorFilter.tint(Gray40),
                                 modifier = Modifier
                                     .clickable {
                                         navController.navigate(NavScreen.Menu.route)
@@ -175,20 +175,10 @@ fun MainScreen(onExitClick: () -> Unit) {
                             Image(
                                 painterResource(id = R.drawable.baseline_card_membership_24),
                                 contentDescription = "Lihat",
-                                colorFilter = ColorFilter.tint(Gray40),
+                                colorFilter = if (currentRoute.value == NavScreen.Member.route) ColorFilter.tint(Blue40) else ColorFilter.tint(Gray40),
                                 modifier = Modifier
                                     .clickable {
-                                        navController.navigate(NavScreen.Menu.route)
-                                    }
-                                    .weight(0.5f)
-                            )
-                            Image(
-                                painterResource(id = R.drawable.baseline_notifications_24),
-                                contentDescription = "Lihat",
-                                colorFilter = ColorFilter.tint(Gray40),
-                                modifier = Modifier
-                                    .clickable {
-                                        navController.navigate(NavScreen.Menu.route)
+                                        navController.navigate(NavScreen.Member.route)
                                     }
                                     .weight(0.5f)
                             )
@@ -197,7 +187,7 @@ fun MainScreen(onExitClick: () -> Unit) {
                 }
             },
             floatingActionButton = {
-                if (currentRoute.value == NavScreen.Book.route || currentRoute.value == NavScreen.Loan.route) {
+                if (currentRoute.value == NavScreen.Book.route || currentRoute.value == NavScreen.Request.route) {
                     FloatingActionButton(
                         onClick = { navController.navigate(NavScreen.Add.route) },
                         containerColor = Blue40,
@@ -231,12 +221,7 @@ fun MainScreen(onExitClick: () -> Unit) {
                 }
                 composable(NavScreen.Menu.route) {
                     currentRoute.value = NavScreen.Menu.route
-                    BookScreen(navController = navController, modifier = Modifier.padding(innerPadding), onDelete = {
-                        scope.launch {
-                            snackBarHostState.showSnackbar("Data telah dihapus", "OK")
-                        }
-                    }) {
-                    }
+                    BookScreen(navController = navController, modifier = Modifier.padding(innerPadding))
                 }
                 composable(NavScreen.Book.route) {
                     currentRoute.value = NavScreen.Book.route
@@ -248,9 +233,19 @@ fun MainScreen(onExitClick: () -> Unit) {
                         navController.navigate("${NavScreen.Edit.route}/$id")
                     }
                 }
-                composable(NavScreen.Loan.route) {
-                    currentRoute.value = NavScreen.Loan.route
-                    LoanBookScreen(modifier = Modifier.padding(innerPadding), onDelete = {
+                composable(NavScreen.Request.route) {
+                    currentRoute.value = NavScreen.Request.route
+                    BookRequestScreen(modifier = Modifier.padding(innerPadding), onDelete = {
+                        scope.launch {
+                            snackBarHostState.showSnackbar("Data telah dihapus", "OK")
+                        }
+                    }) { id ->
+                        navController.navigate("${NavScreen.Edit.route}/$id")
+                    }
+                }
+                composable(NavScreen.Member.route) {
+                    currentRoute.value = NavScreen.Member.route
+                    ListMemberScreen(modifier = Modifier.padding(innerPadding), onDelete = {
                         scope.launch {
                             snackBarHostState.showSnackbar("Data telah dihapus", "OK")
                         }

@@ -5,28 +5,27 @@ import com.skydoves.sandwich.message
 import com.skydoves.sandwich.suspendOnError
 import com.skydoves.sandwich.suspendOnException
 import com.skydoves.sandwich.suspendOnSuccess
-import com.skydoves.whatif.whatIf
 import com.skydoves.whatif.whatIfNotNull
-import id.ac.unpas.agenda.models.Todo
-import id.ac.unpas.agenda.networks.TodoApi
-import id.ac.unpas.agenda.persistences.TodoDao
+import id.ac.unpas.agenda.models.Member
+import id.ac.unpas.agenda.networks.MemberApi
+import id.ac.unpas.agenda.persistences.MemberDao
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
-class TodoRepository @Inject constructor(private val api: TodoApi, private val dao: TodoDao) {
+class MemberRepository @Inject constructor(private val api: MemberApi, private val dao: MemberDao) {
 
     @WorkerThread
     fun loadItems(onSuccess: () -> Unit,
                   onError: (String) -> Unit) = flow {
-        val list: List<Todo> = dao.findAll()
+        val list: List<Member> = dao.findAll()
         api.findAll()
             .suspendOnSuccess {
-                 data.whatIfNotNull {
-                     dao.upsert(it.data)
-                     val localList = dao.findAll()
-                     emit(localList)
-                     onSuccess()
-                 }
+                data.whatIfNotNull {
+                    dao.upsert(it.data)
+                    val localList = dao.findAll()
+                    emit(localList)
+                    onSuccess()
+                }
             }
             .suspendOnError {
                 emit(list)
@@ -37,8 +36,7 @@ class TodoRepository @Inject constructor(private val api: TodoApi, private val d
                 onError(message())
             }
     }
-
-    suspend fun insert(todo: Todo,
+    suspend fun insert(todo: Member,
                        onSuccess: () -> Unit,
                        onError: (String) -> Unit) {
         dao.upsert(todo)
@@ -60,7 +58,7 @@ class TodoRepository @Inject constructor(private val api: TodoApi, private val d
             }
     }
 
-    suspend fun update(todo: Todo,
+    suspend fun update(todo: Member,
                        onSuccess: () -> Unit,
                        onError: (String) -> Unit) {
         dao.upsert(todo)
@@ -82,9 +80,10 @@ class TodoRepository @Inject constructor(private val api: TodoApi, private val d
             }
     }
 
-    suspend fun delete(id: String,
-                       onSuccess: () -> Unit,
-                       onError: (String) -> Unit) {
+    suspend fun delete(
+        id: String,
+        onSuccess: () -> Unit,
+        onError: (String) -> Unit) {
         dao.delete(id)
         api.delete(id)
             .suspendOnSuccess {

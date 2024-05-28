@@ -7,11 +7,14 @@ import com.google.gson.annotations.SerializedName
 
 @Entity
 @Immutable
-data class Todo(
+data class Book(
     @PrimaryKey
     val id: String,
     val title: String,
-    val description: String,
-    @SerializedName("due_date")
-    val dueDate: String
+    val author: String,
+    @SerializedName("released_date")
+    val released_date: String,
+    val stock: Int,
+    val created_at: String,
+    val updated_at: String,
 )

@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
@@ -25,7 +26,7 @@ fun HomeScreen(navController: NavController, modifier: Modifier = Modifier, onLi
     Column(modifier = modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center) {
         Image(painter = painterResource(id = R.drawable.header), contentDescription = "Header", modifier = Modifier
-            .width(500.dp),)
+            .width(500.dp).height(200.dp),)
         Box(
             modifier = Modifier
                 .padding(20.dp).fillMaxWidth(),
@@ -40,7 +41,6 @@ fun HomeScreen(navController: NavController, modifier: Modifier = Modifier, onLi
 
         Row(
             modifier = Modifier
-                .padding(horizontal = 20.dp)
                 .fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly, // Mengatur jarak merata di antara gambar
             verticalAlignment = Alignment.CenterVertically
@@ -48,17 +48,17 @@ fun HomeScreen(navController: NavController, modifier: Modifier = Modifier, onLi
             Image(
                 painter = painterResource(id = R.drawable.populer1),
                 contentDescription = "Populer 1",
-                modifier = Modifier.width(100.dp) // Sesuaikan lebar sesuai kebutuhan
+                modifier = Modifier.width(100.dp).height(100.dp) // Sesuaikan lebar sesuai kebutuhan
             )
             Image(
                 painter = painterResource(id = R.drawable.populer2),
                 contentDescription = "Populer 2",
-                modifier = Modifier.width(100.dp) // Sesuaikan lebar sesuai kebutuhan
+                modifier = Modifier.width(100.dp).height(100.dp) // Sesuaikan lebar sesuai kebutuhan
             )
             Image(
                 painter = painterResource(id = R.drawable.populer3),
                 contentDescription = "Populer 3",
-                modifier = Modifier.width(100.dp) // Sesuaikan lebar sesuai kebutuhan
+                modifier = Modifier.width(100.dp).height(100.dp) // Sesuaikan lebar sesuai kebutuhan
             )
         }
 

@@ -23,7 +23,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun FormTodoScreen(modifier: Modifier = Modifier, id : String? = null) {
 
-    val viewModel = hiltViewModel<TodoViewModel>()
+    val viewModel = hiltViewModel<BookViewModel>()
     val scope = rememberCoroutineScope()
 
     val title = remember { mutableStateOf(TextFieldValue("")) }
@@ -58,19 +58,7 @@ fun FormTodoScreen(modifier: Modifier = Modifier, id : String? = null) {
                 })
 
             Row {
-                Button(modifier = Modifier.weight(5f), onClick = {
-                    if (id != null) {
-                        scope.launch {
-                            viewModel.update(id, title.value.text, description.value.text, dueDate.value.text)
-                        }
-                    } else {
-                        scope.launch {
-                            viewModel.insert(uuid4().toString(), title.value.text, description.value.text, dueDate.value.text)
-                        }
-                    }
-                }) {
-                    Text(text = "Simpan")
-                }
+
 
                 Button(modifier = Modifier.weight(5f), onClick = {
                     title.value = TextFieldValue("")
@@ -101,8 +89,8 @@ fun FormTodoScreen(modifier: Modifier = Modifier, id : String? = null) {
 
         viewModel.item.observe(LocalLifecycleOwner.current) {
             title.value = TextFieldValue(it.title)
-            description.value = TextFieldValue(it.description)
-            dueDate.value = TextFieldValue(it.dueDate)
+            description.value = TextFieldValue(it.author)
+            dueDate.value = TextFieldValue(it.released_date)
         }
     }
 

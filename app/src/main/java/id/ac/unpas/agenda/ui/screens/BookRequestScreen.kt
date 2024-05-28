@@ -24,7 +24,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import id.ac.unpas.agenda.R
-import id.ac.unpas.agenda.models.Todo
+import id.ac.unpas.agenda.models.Book
+import id.ac.unpas.agenda.models.BookRequest
 import id.ac.unpas.agenda.ui.composables.BookCard
 import id.ac.unpas.agenda.ui.composables.ConfirmationDialog
 import id.ac.unpas.agenda.ui.theme.Blue40
@@ -32,13 +33,13 @@ import id.ac.unpas.agenda.ui.theme.White
 import kotlinx.coroutines.launch
 
 @Composable
-fun LoanBookScreen( modifier: Modifier = Modifier, onDelete: () -> Unit, onClick: (String) -> Unit) {
+fun BookRequestScreen( modifier: Modifier = Modifier, onDelete: () -> Unit, onClick: (String) -> Unit) {
 
     val scope = rememberCoroutineScope()
-    val viewModel = hiltViewModel<TodoViewModel>()
+    val viewModel = hiltViewModel<BookRequestViewModel>()
     val search = remember { mutableStateOf("") }
 
-    val list: List<Todo> by viewModel.todos.observeAsState(listOf())
+    val list: List<BookRequest> by viewModel.requests.observeAsState(listOf())
     val title = remember { mutableStateOf("TODO") }
     val openDialog = remember {
         mutableStateOf(false)
@@ -96,30 +97,15 @@ fun LoanBookScreen( modifier: Modifier = Modifier, onDelete: () -> Unit, onClick
                 )
             }
         }
-        BookCard(
-            name1 = "Algoritma dan Pemograman 2",
-            name2 = "Falahah, S.Si., M.T.",
-            qty = 10,
-            date = "2014-06-26 04:07:31",
-            onClick = { }
-        )
-        BookCard(
-            name1 = "Detektif Conan 93",
-            name2 = "Aoyama Gosho",
-            qty = 10,
-            date = "2014-06-26 04:07:31",
-            onClick = { /* Navigate to Peminjaman Buku */ }
-        )
         LazyColumn(modifier = Modifier.fillMaxWidth()) {
             items(list.size) { index ->
                 val item = list[index]
-                TodoItem(item = item, onEditClick = { id ->
-                    onClick(id)
-                }, onDeleteClick = { id ->
-                    deleting.value = true
-                    activeId.value = id
-                    openDialog.value = true
-                })
+                BookCard(
+                    name1 = item.library_book_id,
+                    name2 = item.library_member_id,
+                    qty = 1,
+                    date = item.start_date
+                ) { /* Navigate to Peminjaman Buku */ }
             }
         }
     }

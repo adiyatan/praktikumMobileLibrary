@@ -4,9 +4,12 @@ import com.skydoves.sandwich.retrofit.adapters.ApiResponseCallAdapterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.scopes.ViewModelScoped
 import dagger.hilt.components.SingletonComponent
 import id.ac.unpas.agenda.networks.RequestInterceptor
-import id.ac.unpas.agenda.networks.TodoApi
+import id.ac.unpas.agenda.networks.BookApi
+import id.ac.unpas.agenda.networks.BookRequestApi
+import id.ac.unpas.agenda.networks.MemberApi
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -27,7 +30,7 @@ object NetworkModule {
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
             .client(okHttpClient)
-            .baseUrl("http://172.12.0.109:8000/api/")
+            .baseUrl("https://ppm-api.nimbus.biz.id/api/public/library/")
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(ApiResponseCallAdapterFactory.create())
             .build()
@@ -35,7 +38,19 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideTodoApi(retrofit: Retrofit): TodoApi {
-        return retrofit.create(TodoApi::class.java)
+    fun provideBookApi(retrofit: Retrofit): BookApi {
+        return retrofit.create(BookApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideMemberApi(retrofit: Retrofit): MemberApi {
+        return retrofit.create(MemberApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideBookRequestApi(retrofit: Retrofit): BookRequestApi {
+        return retrofit.create(BookRequestApi::class.java)
     }
 }
