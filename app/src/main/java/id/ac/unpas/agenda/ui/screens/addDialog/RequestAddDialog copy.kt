@@ -13,53 +13,53 @@ import java.util.UUID
 
 
 @Composable
-fun BookAddDialog(onDismiss: () -> Unit, onSave: (BookViewModel) -> Unit) {
+fun RequestAddDialog(onDismiss: () -> Unit, onSave: (BookViewModel) -> Unit) {
     val coroutineScope = rememberCoroutineScope()
 
     data class BookViewModel(
     val id: String,
-    val title: String,
-    val author: String,
-    val releasedDate: Int,
-    val stock: Int
+    val fullName: String,
+    val bookName: String,
+    val borrowingDate: Int,
+    val returnDate: Int
 )
 
     // Define state variables
-    var title by remember { mutableStateOf("") }
-    var author by remember { mutableStateOf("") }
-    var releasedDate by remember { mutableStateOf("") }
-    var stock by remember { mutableStateOf("") }
+    var fullName by remember { mutableStateOf("") }
+    var bookName by remember { mutableStateOf("") }
+    var borrowingDate by remember { mutableStateOf("") }
+    var returnDate by remember { mutableStateOf("") }
     var errorMessage by remember { mutableStateOf<String?>(null) }
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Tambah Buku") },
+        title = { Text("Form Peminjaman") },
         text = {
             Column {
                 Spacer(modifier = Modifier.height(8.dp))
                 TextField(
-                    value = title,
-                    onValueChange = { title = it },
-                    label = { Text("Judul Buku") }
+                    value = fullName,
+                    onValueChange = { fullName = it },
+                    label = { Text("Nama Anggota") }
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 TextField(
-                    value = author,
-                    onValueChange = { author = it },
-                    label = { Text("Penerbit") }
+                    value = bookName,
+                    onValueChange = { bookName = it },
+                    label = { Text("Nama Buku") }
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 TextField(
-                    value = releasedDate,
-                    onValueChange = { releasedDate = it },
-                    label = { Text("Tahun Terbit") },
+                    value = borrowingDate,
+                    onValueChange = { borrowingDate = it },
+                    label = { Text("Tanggal Peminjaman") },
                     keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 TextField(
-                    value = stock,
-                    onValueChange = { stock = it },
-                    label = { Text("Stok") },
+                    value = returnDate,
+                    onValueChange = { returnDate = it },
+                    label = { Text("Tanggal Pengembalian") },
                     keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
                 )
                 if (errorMessage != null) {
@@ -70,15 +70,15 @@ fun BookAddDialog(onDismiss: () -> Unit, onSave: (BookViewModel) -> Unit) {
         },
         confirmButton = {
             Button(onClick = {
-                if (title.isBlank() || author.isBlank() || releasedDate.isBlank() || stock.isBlank() || stock.toIntOrNull() == null) {
+                if (fullName.isBlank() || bookName.isBlank() || borrowingDate.isBlank() || returnDate.isBlank() || returnDate.toIntOrNull() == null) {
                     errorMessage = "Please fill all fields correctly."
                 } else {
                     val book = BookViewModel(
                         id = UUID.randomUUID().toString(),
-                        title = title,
-                        author = author,
-                        releasedDate = releasedDate.toInt(),
-                        stock = stock.toInt()
+                        fullName = fullName,
+                        bookName = bookName,
+                        borrowingDate = borrowingDate.toInt(),
+                        returnDate = returnDate.toInt()
                     )
                 }
             }) {

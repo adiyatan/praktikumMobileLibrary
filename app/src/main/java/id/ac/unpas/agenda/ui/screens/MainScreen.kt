@@ -206,6 +206,32 @@ fun MainScreen(onExitClick: () -> Unit) {
                             )
                         }
                     }
+                    if (currentRoute.value == NavScreen.Member.route ) {
+                        FloatingActionButton(
+                                onClick = { navController.navigate(NavScreen.AddMember.route) },
+                                containerColor = Blue40,
+                                shape = CircleShape // or CircleShape for fully round
+                        ) {
+                            Image(
+                                    painterResource(id = R.drawable.baseline_add_24),
+                                    contentDescription = "AddMember",
+                                    colorFilter = ColorFilter.tint(White),
+                            )
+                        }
+                    }
+                    if (currentRoute.value == NavScreen.Request.route ) {
+                        FloatingActionButton(
+                                onClick = { navController.navigate(NavScreen.addRequest.route) },
+                                containerColor = Blue40,
+                                shape = CircleShape // or CircleShape for fully round
+                        ) {
+                            Image(
+                                    painterResource(id = R.drawable.baseline_add_24),
+                                    contentDescription = "AddRequest",
+                                    colorFilter = ColorFilter.tint(White),
+                            )
+                        }
+                    }
                 },
                 floatingActionButtonPosition = FabPosition.End,
                 snackbarHost = {
@@ -265,6 +291,30 @@ fun MainScreen(onExitClick: () -> Unit) {
                     BookAddDialog(onDismiss = {
                         navController.popBackStack()
                     }, onSave = { book ->
+                        scope.launch {
+                            snackBarHostState.showSnackbar("Data telah disimpan", "OK")
+                            navController.popBackStack()
+                        }
+                    })
+                }
+                composable(NavScreen.AddMember.route) {
+                    //munculkan memberAddDialog
+                    currentRoute.value = NavScreen.AddMember.route
+                    MemberAddDialog(onDismiss = {
+                        navController.popBackStack()
+                    }, onSave = { member ->
+                        scope.launch {
+                            snackBarHostState.showSnackbar("Data telah disimpan", "OK")
+                            navController.popBackStack()
+                        }
+                    })
+                }
+                composable(NavScreen.addRequest.route) {
+                    //munculkan requestAddDialog
+                    currentRoute.value = NavScreen.addRequest.route
+                    RequestAddDialog(onDismiss = {
+                        navController.popBackStack()
+                    }, onSave = { request ->
                         scope.launch {
                             snackBarHostState.showSnackbar("Data telah disimpan", "OK")
                             navController.popBackStack()
