@@ -221,7 +221,7 @@ fun MainScreen(onExitClick: () -> Unit) {
                     }
                     if (currentRoute.value == NavScreen.Request.route ) {
                         FloatingActionButton(
-                                onClick = { navController.navigate(NavScreen.addRequest.route) },
+                                onClick = { navController.navigate(NavScreen.AddRequest.route) },
                                 containerColor = Blue40,
                                 shape = CircleShape // or CircleShape for fully round
                         ) {
@@ -309,9 +309,9 @@ fun MainScreen(onExitClick: () -> Unit) {
                         }
                     })
                 }
-                composable(NavScreen.addRequest.route) {
+                composable(NavScreen.AddRequest.route) {
                     //munculkan requestAddDialog
-                    currentRoute.value = NavScreen.addRequest.route
+                    currentRoute.value = NavScreen.AddRequest.route
                     RequestAddDialog(onDismiss = {
                         navController.popBackStack()
                     }, onSave = { request ->
