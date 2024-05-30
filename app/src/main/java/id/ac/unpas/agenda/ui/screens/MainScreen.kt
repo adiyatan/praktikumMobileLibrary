@@ -293,7 +293,6 @@ fun MainScreen(onExitClick: () -> Unit) {
                     }, onSave = { book ->
                         scope.launch {
                             snackBarHostState.showSnackbar("Data telah disimpan", "OK")
-                            navController.popBackStack()
                         }
                     })
                 }

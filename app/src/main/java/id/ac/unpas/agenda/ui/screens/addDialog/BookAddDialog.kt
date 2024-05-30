@@ -11,7 +11,11 @@ import kotlinx.coroutines.launch
 import java.util.UUID
 import androidx.hilt.navigation.compose.hiltViewModel
 import id.ac.unpas.agenda.models.Book
+import kotlinx.coroutines.delay
+import java.text.SimpleDateFormat
 import java.time.LocalDateTime
+import java.util.Calendar
+import java.util.Locale
 
 @Composable
 fun BookAddDialog(onDismiss: () -> Unit, onSave: (Book) -> Unit) {
@@ -68,28 +72,30 @@ fun BookAddDialog(onDismiss: () -> Unit, onSave: (Book) -> Unit) {
                     errorMessage = "Please fill all fields correctly."
                 } else {
                     coroutineScope.launch {
-                        val id = UUID.randomUUID().toString()
-                        val createdAt = LocalDateTime.now().toString()
-                        val updatedAt = LocalDateTime.now().toString()
-                        val book = Book(
-                            id = id,
-                            title = title,
-                            author = author,
-                            released_date = releasedDate,
-                            stock = stock.toInt(),
-                            created_at = createdAt,
-                            updated_at = updatedAt
-                        )
-                        viewModel.insert(
-                            id = id,
-                            title = title,
-                            author = author,
-                            released_date = releasedDate,
-                            stock = stock.toInt(),
-                            created_at = createdAt,
-                            update_at = updatedAt
-                        )
-                        onSave(book)
+                            val id = UUID.randomUUID().toString()
+                            val calendar = Calendar.getInstance()
+                            val createdAt = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US).format(calendar.time)
+                            val updatedAt = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US).format(calendar.time)
+                            val book = Book(
+                                id = id,
+                                title = title,
+                                author = author,
+                                released_date = releasedDate,
+                                stock = stock.toInt(),
+                                created_at = createdAt,
+                                updated_at = updatedAt
+                            )
+                            viewModel.insert(
+                                id = id,
+                                title = title,
+                                author = author,
+                                released_date = releasedDate,
+                                stock = stock.toInt(),
+                                created_at = createdAt,
+                                update_at = updatedAt
+                            )
+                            onSave(book)
+                            onDismiss()
                     }
                 }
             }) {
