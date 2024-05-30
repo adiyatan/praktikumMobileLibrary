@@ -292,8 +292,7 @@ fun MainScreen(onExitClick: () -> Unit) {
                         navController.popBackStack()
                     }, onSave = { book ->
                         scope.launch {
-                            snackBarHostState.showSnackbar("Data telah disimpan", "OK")
-                            navController.popBackStack()
+                            snackBarHostState.showSnackbar("Data has been saved", "OK")
                         }
                     })
                 }
@@ -304,7 +303,7 @@ fun MainScreen(onExitClick: () -> Unit) {
                         navController.popBackStack()
                     }, onSave = { member ->
                         scope.launch {
-                            snackBarHostState.showSnackbar("Data telah disimpan", "OK")
+                            snackBarHostState.showSnackbar("Data has been saved", "OK")
                             navController.popBackStack()
                         }
                     })
@@ -316,7 +315,7 @@ fun MainScreen(onExitClick: () -> Unit) {
                         navController.popBackStack()
                     }, onSave = { request ->
                         scope.launch {
-                            snackBarHostState.showSnackbar("Data telah disimpan", "OK")
+                            snackBarHostState.showSnackbar("Data has been saved", "OK")
                             navController.popBackStack()
                         }
                     })

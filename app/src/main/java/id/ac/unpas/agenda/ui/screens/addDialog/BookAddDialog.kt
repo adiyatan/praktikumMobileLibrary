@@ -90,6 +90,7 @@ fun BookAddDialog(onDismiss: () -> Unit, onSave: (Book) -> Unit) {
                             update_at = updatedAt
                         )
                         onSave(book)
+                        onDismiss()
                     }
                 }
             }) {
