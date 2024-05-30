@@ -9,20 +9,14 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import java.util.UUID
-
-
+import androidx.hilt.navigation.compose.hiltViewModel
+import id.ac.unpas.agenda.models.Book
+import java.time.LocalDateTime
 
 @Composable
-fun BookAddDialog(onDismiss: () -> Unit, onSave: (BookViewModel) -> Unit) {
+fun BookAddDialog(onDismiss: () -> Unit, onSave: (Book) -> Unit) {
     val coroutineScope = rememberCoroutineScope()
-
-    data class BookViewModel(
-    val id: String,
-    val title: String,
-    val author: String,
-    val releasedDate: Int,
-    val stock: Int
-)
+    val viewModel: BookViewModel = hiltViewModel()
 
     // Define state variables
     var title by remember { mutableStateOf("") }
@@ -73,13 +67,30 @@ fun BookAddDialog(onDismiss: () -> Unit, onSave: (BookViewModel) -> Unit) {
                 if (title.isBlank() || author.isBlank() || releasedDate.isBlank() || stock.isBlank() || stock.toIntOrNull() == null) {
                     errorMessage = "Please fill all fields correctly."
                 } else {
-                    val book = BookViewModel(
-                        id = UUID.randomUUID().toString(),
-                        title = title,
-                        author = author,
-                        releasedDate = releasedDate.toInt(),
-                        stock = stock.toInt()
-                    )
+                    coroutineScope.launch {
+                        val id = UUID.randomUUID().toString()
+                        val createdAt = LocalDateTime.now().toString()
+                        val updatedAt = LocalDateTime.now().toString()
+                        val book = Book(
+                            id = id,
+                            title = title,
+                            author = author,
+                            released_date = releasedDate,
+                            stock = stock.toInt(),
+                            created_at = createdAt,
+                            updated_at = updatedAt
+                        )
+                        viewModel.insert(
+                            id = id,
+                            title = title,
+                            author = author,
+                            released_date = releasedDate,
+                            stock = stock.toInt(),
+                            created_at = createdAt,
+                            update_at = updatedAt
+                        )
+                        onSave(book)
+                    }
                 }
             }) {
                 Text("Save")
