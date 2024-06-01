@@ -292,6 +292,7 @@ fun MainScreen(onExitClick: () -> Unit) {
                         navController.popBackStack()
                     }, onSave = { book ->
                         scope.launch {
+                            navController.navigate(NavScreen.Book.route)
                             snackBarHostState.showSnackbar("Data has been saved", "OK")
                         }
                     })

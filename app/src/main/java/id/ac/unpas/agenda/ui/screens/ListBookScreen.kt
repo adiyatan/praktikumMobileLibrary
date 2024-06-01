@@ -140,20 +140,30 @@ fun ListBookScreen(modifier: Modifier = Modifier, onDelete: () -> Unit, onClick:
 
     // Show the edit dialog if the state is set to true
     if (showEditDialog && selectedBook != null) {
-        BookEditDialog(item = selectedBook!!, onDismiss = { showEditDialog = false }) { updatedBook ->
-            // Handle saving the updated book
-            scope.launch {
-                viewModel.update(
-                    id = updatedBook.id,
-                    title = updatedBook.title,
-                    author = updatedBook.author,
-                    released_date = updatedBook.released_date,
-                    stock = updatedBook.stock,
-                    created_at = updatedBook.created_at,
-                    update_at = updatedBook.updated_at
-                )
-                showEditDialog = false
+        BookEditDialog(
+            item = selectedBook!!, 
+            onDismiss = { showEditDialog = false },
+            onSave = { updatedBook ->
+                // Handle saving the updated book
+                scope.launch {
+                    viewModel.update(
+                        id = updatedBook.id,
+                        title = updatedBook.title,
+                        author = updatedBook.author,
+                        released_date = updatedBook.released_date,
+                        stock = updatedBook.stock,
+                        created_at = updatedBook.created_at,
+                        update_at = updatedBook.updated_at
+                    )
+                    showEditDialog = false
+                }
+            },
+            onDelete = {
+                scope.launch {
+                    viewModel.delete(selectedBook!!.id)
+                    showEditDialog = false
+                }
             }
-        }
+        )
     }
 }

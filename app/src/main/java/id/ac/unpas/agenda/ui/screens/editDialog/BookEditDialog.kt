@@ -17,7 +17,7 @@ import java.util.Date
 import java.util.Locale
 
 @Composable
-fun BookEditDialog(item: Book, onDismiss: () -> Unit, onSave: (Book) -> Unit) {
+fun BookEditDialog(item: Book, onDismiss: () -> Unit, onSave: (Book) -> Unit, onDelete: () -> Unit) {
     val coroutineScope = rememberCoroutineScope()
     val viewModel: BookViewModel = hiltViewModel()
 
@@ -76,28 +76,42 @@ fun BookEditDialog(item: Book, onDismiss: () -> Unit, onSave: (Book) -> Unit) {
             }
         },
         confirmButton = {
-            Button(onClick = {
-                coroutineScope.launch {
-                    if (title.isBlank() || author.isBlank() || releasedDate.isBlank() || stock.isBlank() || stock.toIntOrNull() == null) {
-                        errorMessage = "Please fill all fields correctly."
-                    } else {
-                        val formattedTitle = formatTitle(title)
-                        if (viewModel.existsByTitle(formattedTitle)) {
-                            errorMessage = "Nama buku sudah ada."
+            Row(
+                horizontalArrangement = Arrangement.End,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Button(onClick = {
+                    coroutineScope.launch {
+                        if (title.isBlank() || author.isBlank() || releasedDate.isBlank() || stock.isBlank() || stock.toIntOrNull() == null) {
+                            errorMessage = "Please fill all fields correctly."
                         } else {
-                            val updatedBook = item.copy(
-                                title = formattedTitle,
-                                author = author,
-                                released_date = releasedDate,
-                                stock = stock.toInt()
-                            )
-                            onSave(updatedBook)
-                            onDismiss()
+                            val formattedTitle = formatTitle(title)
+                            if (viewModel.existsByTitle(formattedTitle)) {
+                                errorMessage = "Nama buku sudah ada."
+                            } else {
+                                val updatedBook = item.copy(
+                                    title = formattedTitle,
+                                    author = author,
+                                    released_date = releasedDate,
+                                    stock = stock.toInt()
+                                )
+                                onSave(updatedBook)
+                                onDismiss()
+                            }
                         }
                     }
+                }) {
+                    Text("Save")
                 }
-            }) {
-                Text("Save")
+                Spacer(modifier = Modifier.width(8.dp))
+                Button(onClick = {
+                    coroutineScope.launch {
+                        onDelete()
+                        onDismiss()
+                    }
+                }, colors = ButtonDefaults.buttonColors()) {
+                    Text("Delete")
+                }
             }
         },
         dismissButton = {
