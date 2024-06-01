@@ -86,7 +86,7 @@ fun BookEditDialog(item: Book, onDismiss: () -> Unit, onSave: (Book) -> Unit, on
                             errorMessage = "Please fill all fields correctly."
                         } else {
                             val formattedTitle = formatTitle(title)
-                            if (viewModel.existsByTitle(formattedTitle)) {
+                            if (formattedTitle != item.title && viewModel.existsByTitle(formattedTitle)) {
                                 errorMessage = "Nama buku sudah ada."
                             } else {
                                 val updatedBook = item.copy(
