@@ -7,12 +7,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,7 +28,7 @@ import id.ac.unpas.agenda.ui.theme.White
 import kotlinx.coroutines.launch
 
 @Composable
-fun ListBookScreen( modifier: Modifier = Modifier, onDelete: () -> Unit, onClick: (String) -> Unit) {
+fun ListBookScreen(modifier: Modifier = Modifier, onDelete: () -> Unit, onClick: (String) -> Unit) {
 
     val scope = rememberCoroutineScope()
     val viewModel = hiltViewModel<BookViewModel>()
@@ -49,6 +45,10 @@ fun ListBookScreen( modifier: Modifier = Modifier, onDelete: () -> Unit, onClick
     val deleting = remember {
         mutableStateOf(false)
     }
+
+    // State for the selected book and the visibility of the edit dialog
+    var selectedBook by remember { mutableStateOf<Book?>(null) }
+    var showEditDialog by remember { mutableStateOf(false) }
 
     Column(modifier = modifier.fillMaxWidth()) {
         Box(
@@ -74,7 +74,7 @@ fun ListBookScreen( modifier: Modifier = Modifier, onDelete: () -> Unit, onClick
                 placeholder = { Text(text = "Cari Buku", color = Color.Gray) },
                 modifier = roundedOutlinedTextFieldModifier(12.dp).background(color = White),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = White ,
+                    focusedBorderColor = White,
                     unfocusedBorderColor = White,
                 ),
                 shape = RoundedCornerShape(12.dp)
@@ -84,8 +84,7 @@ fun ListBookScreen( modifier: Modifier = Modifier, onDelete: () -> Unit, onClick
                 modifier = Modifier
                     .size(40.dp)
                     .background(color = Blue40, shape = RoundedCornerShape(12.dp))
-                    .clickable { /* Perform search action */ }
-                    ,
+                    .clickable { /* Perform search action */ },
                 contentAlignment = Alignment.Center
             ) {
                 Image(
@@ -104,7 +103,11 @@ fun ListBookScreen( modifier: Modifier = Modifier, onDelete: () -> Unit, onClick
                     name2 = item.author,
                     qty = item.stock,
                     date = item.released_date
-                ) { /* Navigate to Peminjaman Buku */ }
+                ) {
+                    // Set the selected book and show the edit dialog
+                    selectedBook = item
+                    showEditDialog = true
+                }
             }
         }
     }
@@ -132,6 +135,25 @@ fun ListBookScreen( modifier: Modifier = Modifier, onDelete: () -> Unit, onClick
         if (deleting.value && it) {
             deleting.value = false
             onDelete()
+        }
+    }
+
+    // Show the edit dialog if the state is set to true
+    if (showEditDialog && selectedBook != null) {
+        BookEditDialog(item = selectedBook!!, onDismiss = { showEditDialog = false }) { updatedBook ->
+            // Handle saving the updated book
+            scope.launch {
+                viewModel.update(
+                    id = updatedBook.id,
+                    title = updatedBook.title,
+                    author = updatedBook.author,
+                    released_date = updatedBook.released_date,
+                    stock = updatedBook.stock,
+                    created_at = updatedBook.created_at,
+                    update_at = updatedBook.updated_at
+                )
+                showEditDialog = false
+            }
         }
     }
 }
