@@ -15,16 +15,15 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-
 @Composable
-fun MemberAddDialog(onDismiss: () -> Unit, onSave: (Member) -> Unit) {
+fun MemberEditDialog(item: Member, onDismiss: () -> Unit, onSave: (Member) -> Unit) {
     val coroutineScope = rememberCoroutineScope()
     val viewModel: MemberViewModel = hiltViewModel()
 
     // Define state variables
-    var fullName by remember { mutableStateOf("") }
-    var address by remember { mutableStateOf("") }
-    var phone by remember { mutableStateOf("") }
+    var name by remember { mutableStateOf(item.name) }
+    var address by remember { mutableStateOf(item.address) }
+    var phone by remember { mutableStateOf(item.phone) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
 
     fun sanitizeInput(input: String): String {
@@ -33,13 +32,13 @@ fun MemberAddDialog(onDismiss: () -> Unit, onSave: (Member) -> Unit) {
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Tambah Anggota") },
+        title = { Text("Edit Anggota") },
         text = {
             Column {
                 Spacer(modifier = Modifier.height(8.dp))
                 TextField(
-                    value = fullName,
-                    onValueChange = { fullName = sanitizeInput(it) },
+                    value = name,
+                    onValueChange = { name = sanitizeInput(it) },
                     label = { Text("Nama Anggota") }
                 )
                 Spacer(modifier = Modifier.height(8.dp))
@@ -51,7 +50,7 @@ fun MemberAddDialog(onDismiss: () -> Unit, onSave: (Member) -> Unit) {
                 Spacer(modifier = Modifier.height(8.dp))
                 TextField(
                     value = phone,
-                    onValueChange = { phone = it },
+                    onValueChange = { phone = sanitizeInput(it) },
                     label = { Text("Nomor Telepon") },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone)
                 )
@@ -63,31 +62,26 @@ fun MemberAddDialog(onDismiss: () -> Unit, onSave: (Member) -> Unit) {
         },
         confirmButton = {
             Button(onClick = {
-                if (fullName.isBlank() || address.isBlank() || phone.isBlank()) {
+                if (name.isBlank() || address.isBlank() || phone.isBlank()) {
                     errorMessage = "Please fill all fields correctly."
                 } else {
                     coroutineScope.launch {
-                        val id = UUID.randomUUID().toString()
                         val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", Locale.getDefault())
-                        val createdAt = sdf.format(Date())
-                        val updatedAt = sdf.format(Date())
-                        val member = Member(
-                            id = id,
-                            name = fullName,
+                        val updatedMember = item.copy(
+                            name = name,
                             address = address,
                             phone = phone,
-                            created_at = createdAt,
-                            updated_at = updatedAt
+                            updated_at = sdf.format(Date())
                         )
-                        viewModel.insert(
-                            id = id,
-                            name = fullName,
-                            address = address,
-                            phone = phone,
-                            created_at = createdAt,
-                            update_at = updatedAt
+                        viewModel.update(
+                            id = updatedMember.id,
+                            name = updatedMember.name,
+                            address = updatedMember.address,
+                            phone = updatedMember.phone,
+                            created_at = updatedMember.created_at,
+                            update_at = updatedMember.updated_at
                         )
-                        onSave(member)
+                        onSave(updatedMember)
                         onDismiss()
                     }
                 }

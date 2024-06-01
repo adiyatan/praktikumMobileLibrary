@@ -7,12 +7,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,28 +28,26 @@ import id.ac.unpas.agenda.ui.theme.White
 import kotlinx.coroutines.launch
 
 @Composable
-fun ListMemberScreen( modifier: Modifier = Modifier, onDelete: () -> Unit, onClick: (String) -> Unit) {
+fun ListMemberScreen(modifier: Modifier = Modifier, onDelete: () -> Unit, onClick: (String) -> Unit) {
 
     val scope = rememberCoroutineScope()
     val viewModel = hiltViewModel<MemberViewModel>()
     val search = remember { mutableStateOf("") }
 
+    var selectedMember by remember { mutableStateOf<Member?>(null) }
+    var showEditDialog by remember { mutableStateOf(false) }
+
     val list: List<Member> by viewModel.members.observeAsState(listOf())
     val title = remember { mutableStateOf("DAFTAR ANGGOTA") }
-    val openDialog = remember {
-        mutableStateOf(false)
-    }
-    val activeId = remember {
-        mutableStateOf("")
-    }
-    val deleting = remember {
-        mutableStateOf(false)
-    }
+    val openDialog = remember { mutableStateOf(false) }
+    val activeId = remember { mutableStateOf("") }
+    val deleting = remember { mutableStateOf(false) }
 
     Column(modifier = modifier.fillMaxWidth()) {
         Box(
             modifier = Modifier
-                .padding(10.dp).fillMaxWidth(),
+                .padding(10.dp)
+                .fillMaxWidth(),
             contentAlignment = Alignment.Center,
         ) {
             Text(
@@ -71,21 +65,22 @@ fun ListMemberScreen( modifier: Modifier = Modifier, onDelete: () -> Unit, onCli
             OutlinedTextField(
                 value = search.value,
                 onValueChange = { search.value = it },
-                placeholder = { Text(text = "Cari Buku", color = Color.Gray) },
-                modifier = roundedOutlinedTextFieldModifier(12.dp).background(color = White),
+                placeholder = { Text(text = "Cari Anggota", color = Color.Gray) },
+                modifier = Modifier
+                    .fillMaxWidth(0.9f)
+                    .background(color = White),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = White ,
+                    focusedBorderColor = White,
                     unfocusedBorderColor = White,
                 ),
                 shape = RoundedCornerShape(12.dp)
             )
-            Spacer(modifier = Modifier.width(36.dp))
+            Spacer(modifier = Modifier.width(8.dp))
             Box(
                 modifier = Modifier
                     .size(40.dp)
                     .background(color = Blue40, shape = RoundedCornerShape(12.dp))
-                    .clickable { /* Perform search action */ }
-                    ,
+                    .clickable { /* Perform search action */ },
                 contentAlignment = Alignment.Center
             ) {
                 Image(
@@ -103,7 +98,11 @@ fun ListMemberScreen( modifier: Modifier = Modifier, onDelete: () -> Unit, onCli
                     name = item.name,
                     phone = item.phone,
                     address = item.address,
-                ) { /* Navigate to Peminjaman Buku */ }
+                ) {
+                    // Set the selected member and show the edit dialog
+                    selectedMember = item
+                    showEditDialog = true
+                }
             }
         }
     }
@@ -123,7 +122,7 @@ fun ListMemberScreen( modifier: Modifier = Modifier, onDelete: () -> Unit, onCli
         if (it) {
             title.value = "Loading..."
         } else {
-            title.value = "TODO"
+            title.value = "DAFTAR ANGGOTA"
         }
     }
 
@@ -131,6 +130,23 @@ fun ListMemberScreen( modifier: Modifier = Modifier, onDelete: () -> Unit, onCli
         if (deleting.value && it) {
             deleting.value = false
             onDelete()
+        }
+    }
+
+    if (showEditDialog && selectedMember != null) {
+        MemberEditDialog(item = selectedMember!!, onDismiss = { showEditDialog = false }) { updatedMember ->
+            // Handle saving the updated member
+            scope.launch {
+                viewModel.update(
+                    id = updatedMember.id,
+                    name = updatedMember.name,
+                    address = updatedMember.address,
+                    phone = updatedMember.phone,
+                    created_at = updatedMember.created_at,
+                    update_at = updatedMember.updated_at
+                )
+                showEditDialog = false
+            }
         }
     }
 }
