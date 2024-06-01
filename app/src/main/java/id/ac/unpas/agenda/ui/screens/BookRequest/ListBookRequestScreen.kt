@@ -31,30 +31,32 @@ import id.ac.unpas.agenda.ui.composables.ConfirmationDialog
 import id.ac.unpas.agenda.ui.theme.Blue40
 import id.ac.unpas.agenda.ui.theme.White
 import kotlinx.coroutines.launch
+import androidx.compose.runtime.LaunchedEffect
+import id.ac.unpas.agenda.models.Member
 
 @Composable
-fun ListBookRequestScreen( modifier: Modifier = Modifier, onDelete: () -> Unit, onClick: (String) -> Unit) {
-
+fun ListBookRequestScreen(
+    modifier: Modifier = Modifier,
+    onDelete: () -> Unit,
+    onClick: (String) -> Unit
+) {
     val scope = rememberCoroutineScope()
     val viewModel = hiltViewModel<BookRequestViewModel>()
     val search = remember { mutableStateOf("") }
+    val bookViewModel: BookViewModel = hiltViewModel()
+    val memberViewModel: MemberViewModel = hiltViewModel()
 
     val list: List<BookRequest> by viewModel.requests.observeAsState(listOf())
     val title = remember { mutableStateOf("TODO") }
-    val openDialog = remember {
-        mutableStateOf(false)
-    }
-    val activeId = remember {
-        mutableStateOf("")
-    }
-    val deleting = remember {
-        mutableStateOf(false)
-    }
+    val openDialog = remember { mutableStateOf(false) }
+    val activeId = remember { mutableStateOf("") }
+    val deleting = remember { mutableStateOf(false) }
 
     Column(modifier = modifier.fillMaxWidth()) {
         Box(
             modifier = Modifier
-                .padding(10.dp).fillMaxWidth(),
+                .padding(10.dp)
+                .fillMaxWidth(),
             contentAlignment = Alignment.Center,
         ) {
             Text(
@@ -73,20 +75,21 @@ fun ListBookRequestScreen( modifier: Modifier = Modifier, onDelete: () -> Unit, 
                 value = search.value,
                 onValueChange = { search.value = it },
                 placeholder = { Text(text = "Cari Buku", color = Color.Gray) },
-                modifier = roundedOutlinedTextFieldModifier(12.dp).background(color = White),
+                modifier = Modifier
+                    .background(color = White)
+                    .fillMaxWidth(0.8f),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = White ,
+                    focusedBorderColor = White,
                     unfocusedBorderColor = White,
                 ),
                 shape = RoundedCornerShape(12.dp)
             )
-            Spacer(modifier = Modifier.width(36.dp))
+            Spacer(modifier = Modifier.width(8.dp))
             Box(
                 modifier = Modifier
                     .size(40.dp)
                     .background(color = Blue40, shape = RoundedCornerShape(12.dp))
-                    .clickable { /* Perform search action */ }
-                    ,
+                    .clickable { /* Perform search action */ },
                 contentAlignment = Alignment.Center
             ) {
                 Image(
@@ -100,12 +103,27 @@ fun ListBookRequestScreen( modifier: Modifier = Modifier, onDelete: () -> Unit, 
         LazyColumn(modifier = Modifier.fillMaxWidth()) {
             items(list.size) { index ->
                 val item = list[index]
-                BookCard(
-                    name1 = item.library_book_id,
-                    name2 = item.library_member_id,
-                    qty = 1,
-                    date = item.start_date
-                ) { /* Navigate to Peminjaman Buku */ }
+                val book = remember { mutableStateOf<Book?>(null) }
+                val member = remember { mutableStateOf<Member?>(null) }
+
+                LaunchedEffect(item.library_book_id) {
+                    book.value = bookViewModel.findId(item.library_book_id)
+                }
+
+                LaunchedEffect(item.library_member_id) {
+                    member.value = memberViewModel.findId(item.library_member_id)
+                }
+
+                book.value?.let { book ->
+                    BookCard(
+                        name1 = book.title,
+                        name2 = member.value?.name ?: "Unknown",
+                        qty = 1,
+                        date = item.start_date
+                    ) {
+                        onClick(item.library_book_id)
+                    }
+                }
             }
         }
     }

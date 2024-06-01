@@ -112,4 +112,8 @@ class BookRepository @Inject constructor(private val api: BookApi, private val d
     suspend fun findByTitle(title: String): Book? {
         return dao.findByTitle(title)
     }
+    
+    suspend fun findId(id: String): Book? {
+        return dao.findId(id)
+    }
 }

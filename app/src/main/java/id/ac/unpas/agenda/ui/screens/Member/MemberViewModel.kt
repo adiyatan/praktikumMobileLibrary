@@ -111,4 +111,8 @@ class MemberViewModel @Inject constructor(private val todoRepository: MemberRepo
     suspend fun findByName(name: String): Member? {
         return todoRepository.findByName(name)
     }
+
+    suspend fun findId(id: String): Member? {
+        return todoRepository.findId(id)
+    }
 }

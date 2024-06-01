@@ -40,4 +40,7 @@ interface MemberDao {
 
     @Query("SELECT * FROM member WHERE name = :name LIMIT 1")
     suspend fun findByName(name: String): Member?
+
+    @Query("SELECT * FROM member WHERE id = :id LIMIT 1")
+    suspend fun findId(id: String): Member?
 }

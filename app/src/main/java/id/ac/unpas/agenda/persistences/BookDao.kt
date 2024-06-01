@@ -43,4 +43,7 @@ interface BookDao {
 
     @Query("SELECT * FROM book WHERE title = :title LIMIT 1")
     suspend fun findByTitle(title: String): Book?
+
+    @Query("SELECT * FROM book WHERE id = :id LIMIT 1")
+    suspend fun findId(id: String): Book?
 }

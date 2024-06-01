@@ -52,6 +52,10 @@ class BookViewModel @Inject constructor(private val todoRepository: BookReposito
         return todoRepository.findByTitle(title)
     }
 
+    suspend fun findId(id: String): Book? {
+        return todoRepository.findId(id)
+    }
+
     suspend fun insert(id: String,
                        title: String,
                        author: String,
@@ -110,13 +114,6 @@ class BookViewModel @Inject constructor(private val todoRepository: BookReposito
             _isDone.postValue(true)
             _book.postValue(true)
             _isDeleted.postValue(false)
-        }
-    }
-
-    suspend fun find(id: String) {
-        val book = todoRepository.find(id)
-        book?.let {
-            _item.postValue(it)
         }
     }
 }
