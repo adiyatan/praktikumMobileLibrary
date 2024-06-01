@@ -89,7 +89,7 @@ fun BookCard(name1: String, name2: String, qty: Int, date: String, onClick: () -
                     .background(Color.White)
             ) {
                 Image(
-                    painter = painterResource( id = R.drawable.settings), contentDescription = "Login Logo", modifier = Modifier
+                    painter = painterResource( id = R.drawable.settings), contentDescription = "Edit", modifier = Modifier
                         .width(40.dp),
                     colorFilter = ColorFilter.tint(Color.Black),
 
