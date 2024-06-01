@@ -37,4 +37,7 @@ interface BookDao {
 
     @Delete
     suspend fun delete(item: Book)
+
+    @Query("SELECT COUNT(*) FROM book WHERE title = :title")
+    suspend fun existsByTitle(title: String): Int
 }

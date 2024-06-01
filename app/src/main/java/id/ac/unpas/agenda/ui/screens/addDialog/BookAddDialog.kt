@@ -27,6 +27,16 @@ fun BookAddDialog(onDismiss: () -> Unit, onSave: (Book) -> Unit) {
     var stock by remember { mutableStateOf("") }
     var errorMessage by remember { mutableStateOf<String?>(null) }
 
+    // Function to sanitize input
+    fun sanitizeInput(input: String): String {
+        return input.replace(Regex("[^A-Za-z0-9\\s]"), "")
+    }
+
+    // Function to capitalize each word
+    fun formatTitle(input: String): String {
+        return input.split(" ").joinToString(" ") { it.lowercase().replaceFirstChar { char -> char.uppercase() } }
+    }
+
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text("Tambah Buku") },
@@ -35,26 +45,26 @@ fun BookAddDialog(onDismiss: () -> Unit, onSave: (Book) -> Unit) {
                 Spacer(modifier = Modifier.height(8.dp))
                 TextField(
                     value = title,
-                    onValueChange = { title = it },
+                    onValueChange = { title = sanitizeInput(it) },
                     label = { Text("Judul Buku") }
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 TextField(
                     value = author,
-                    onValueChange = { author = it },
+                    onValueChange = { author = sanitizeInput(it) },
                     label = { Text("Penulis") }
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 TextField(
                     value = releasedDate,
-                    onValueChange = { releasedDate = it },
+                    onValueChange = { releasedDate = sanitizeInput(it) },
                     label = { Text("Tahun Terbit") },
                     keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 TextField(
                     value = stock,
-                    onValueChange = { stock = it },
+                    onValueChange = { stock = sanitizeInput(it) },
                     label = { Text("Stok") },
                     keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
                 )
@@ -66,34 +76,39 @@ fun BookAddDialog(onDismiss: () -> Unit, onSave: (Book) -> Unit) {
         },
         confirmButton = {
             Button(onClick = {
-                if (title.isBlank() || author.isBlank() || releasedDate.isBlank() || stock.isBlank() || stock.toIntOrNull() == null) {
-                    errorMessage = "Please fill all fields correctly."
-                } else {
-                    coroutineScope.launch {
-                        val id = UUID.randomUUID().toString()
-                        val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", Locale.getDefault())
-                        val createdAt = sdf.format(Date())
-                        val updatedAt = sdf.format(Date())
-                        val book = Book(
-                            id = id,
-                            title = title,
-                            author = author,
-                            released_date = releasedDate,
-                            stock = stock.toInt(),
-                            created_at = createdAt,
-                            updated_at = updatedAt
-                        )
-                        viewModel.insert(
-                            id = id,
-                            title = title,
-                            author = author,
-                            released_date = releasedDate,
-                            stock = stock.toInt(),
-                            created_at = createdAt,
-                            update_at = updatedAt
-                        )
-                        onSave(book)
-                        onDismiss()
+                coroutineScope.launch {
+                    if (title.isBlank() || author.isBlank() || releasedDate.isBlank() || stock.isBlank() || stock.toIntOrNull() == null) {
+                        errorMessage = "Please fill all fields correctly."
+                    } else {
+                        val formattedTitle = formatTitle(title)
+                        if (viewModel.existsByTitle(formattedTitle)) {
+                            errorMessage = "Nama buku sudah ada."
+                        } else {
+                            val id = UUID.randomUUID().toString()
+                            val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", Locale.getDefault())
+                            val createdAt = sdf.format(Date())
+                            val updatedAt = sdf.format(Date())
+                            val book = Book(
+                                id = id,
+                                title = formattedTitle,
+                                author = author,
+                                released_date = releasedDate,
+                                stock = stock.toInt(),
+                                created_at = createdAt,
+                                updated_at = updatedAt
+                            )
+                            viewModel.insert(
+                                id = id,
+                                title = formattedTitle,
+                                author = author,
+                                released_date = releasedDate,
+                                stock = stock.toInt(),
+                                created_at = createdAt,
+                                update_at = updatedAt
+                            )
+                            onSave(book)
+                            onDismiss()
+                        }
                     }
                 }
             }) {

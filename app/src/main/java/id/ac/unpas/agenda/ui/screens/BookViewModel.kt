@@ -42,6 +42,11 @@ class BookViewModel @Inject constructor(private val todoRepository: BookReposito
         }
     }
 
+    //function existsByTitle
+    suspend fun existsByTitle(title: String): Boolean {
+        return todoRepository.existsByTitle(title)
+    }
+
     suspend fun insert(id: String,
                        title: String,
                        author: String,
