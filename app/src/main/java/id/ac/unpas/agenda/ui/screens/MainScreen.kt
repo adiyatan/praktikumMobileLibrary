@@ -320,14 +320,6 @@ fun MainScreen(onExitClick: () -> Unit) {
                         }
                     })
                 }
-                composable(NavScreen.Edit.routeWithArgument,
-                        arguments = listOf(navArgument(NavScreen.Edit.argument0) { type = NavType.StringType })
-                ) { backStackEntry ->
-                    val id = backStackEntry.arguments?.getString(NavScreen.Edit.argument0) ?: return@composable
-
-                    currentRoute.value = NavScreen.Edit.route
-                    FormTodoScreen(modifier = Modifier.padding(innerPadding), id = id)
-                }
             }
         }
     }
