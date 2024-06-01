@@ -94,6 +94,16 @@ fun RequestAddDialog(onDismiss: () -> Unit, onSave: (BookRequest) -> Unit) {
                                 created_at = createdAt,
                                 updated_at = updatedAt
                             )
+                            viewModel.insert(
+                                id = bookRequest.id,
+                                library_book_id = bookRequest.library_book_id,
+                                library_member_id = bookRequest.library_member_id,
+                                start_date = bookRequest.start_date,
+                                end_date = bookRequest.end_date,
+                                status = bookRequest.status,
+                                created_at = bookRequest.created_at,
+                                updated_at = bookRequest.updated_at
+                            )
                             onSave(bookRequest)
                             onDismiss()
                         } else {
