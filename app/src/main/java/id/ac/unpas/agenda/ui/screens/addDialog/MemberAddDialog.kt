@@ -31,6 +31,10 @@ fun MemberAddDialog(onDismiss: () -> Unit, onSave: (Member) -> Unit) {
         return input.replace(Regex("[^A-Za-z0-9\\s]"), "")
     }
 
+    fun capitalizeWords(input: String): String {
+        return input.split(" ").joinToString(" ") { it.lowercase().replaceFirstChar { char -> char.uppercase() } }
+    }
+
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text("Tambah Anggota") },
@@ -39,7 +43,7 @@ fun MemberAddDialog(onDismiss: () -> Unit, onSave: (Member) -> Unit) {
                 Spacer(modifier = Modifier.height(8.dp))
                 TextField(
                     value = fullName,
-                    onValueChange = { fullName = sanitizeInput(it) },
+                    onValueChange = { fullName = capitalizeWords(sanitizeInput(it)) },
                     label = { Text("Nama Anggota") }
                 )
                 Spacer(modifier = Modifier.height(8.dp))
