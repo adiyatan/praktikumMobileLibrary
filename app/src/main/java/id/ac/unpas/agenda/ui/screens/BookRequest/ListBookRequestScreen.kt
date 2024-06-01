@@ -33,7 +33,7 @@ import id.ac.unpas.agenda.ui.theme.White
 import kotlinx.coroutines.launch
 
 @Composable
-fun BookRequestScreen( modifier: Modifier = Modifier, onDelete: () -> Unit, onClick: (String) -> Unit) {
+fun ListBookRequestScreen( modifier: Modifier = Modifier, onDelete: () -> Unit, onClick: (String) -> Unit) {
 
     val scope = rememberCoroutineScope()
     val viewModel = hiltViewModel<BookRequestViewModel>()

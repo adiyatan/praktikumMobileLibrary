@@ -267,7 +267,7 @@ fun MainScreen(onExitClick: () -> Unit) {
                 }
                 composable(NavScreen.Request.route) {
                     currentRoute.value = NavScreen.Request.route
-                    BookRequestScreen(modifier = Modifier.padding(innerPadding), onDelete = {
+                    ListBookRequestScreen(modifier = Modifier.padding(innerPadding), onDelete = {
                         scope.launch {
                             snackBarHostState.showSnackbar("Data telah dihapus", "OK")
                         }
