@@ -11,7 +11,9 @@ import kotlinx.coroutines.launch
 import java.util.UUID
 import androidx.hilt.navigation.compose.hiltViewModel
 import id.ac.unpas.agenda.models.Book
-import java.time.LocalDateTime
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @Composable
 fun BookAddDialog(onDismiss: () -> Unit, onSave: (Book) -> Unit) {
@@ -69,8 +71,9 @@ fun BookAddDialog(onDismiss: () -> Unit, onSave: (Book) -> Unit) {
                 } else {
                     coroutineScope.launch {
                         val id = UUID.randomUUID().toString()
-                        val createdAt = LocalDateTime.now().toString()
-                        val updatedAt = LocalDateTime.now().toString()
+                        val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", Locale.getDefault())
+                        val createdAt = sdf.format(Date())
+                        val updatedAt = sdf.format(Date())
                         val book = Book(
                             id = id,
                             title = title,

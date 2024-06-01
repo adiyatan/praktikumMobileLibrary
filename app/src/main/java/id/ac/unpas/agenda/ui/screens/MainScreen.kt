@@ -304,7 +304,6 @@ fun MainScreen(onExitClick: () -> Unit) {
                     }, onSave = { member ->
                         scope.launch {
                             snackBarHostState.showSnackbar("Data has been saved", "OK")
-                            navController.popBackStack()
                         }
                     })
                 }
@@ -316,7 +315,6 @@ fun MainScreen(onExitClick: () -> Unit) {
                     }, onSave = { request ->
                         scope.launch {
                             snackBarHostState.showSnackbar("Data has been saved", "OK")
-                            navController.popBackStack()
                         }
                     })
                 }
