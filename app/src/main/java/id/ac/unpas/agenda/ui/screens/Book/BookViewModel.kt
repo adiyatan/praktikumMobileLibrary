@@ -47,6 +47,11 @@ class BookViewModel @Inject constructor(private val todoRepository: BookReposito
         return todoRepository.existsByTitle(title)
     }
 
+    //find by title
+    suspend fun findByTitle(title: String): Book? {
+        return todoRepository.findByTitle(title)
+    }
+
     suspend fun insert(id: String,
                        title: String,
                        author: String,

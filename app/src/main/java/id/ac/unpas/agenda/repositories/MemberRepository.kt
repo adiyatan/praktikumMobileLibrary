@@ -104,4 +104,8 @@ class MemberRepository @Inject constructor(private val api: MemberApi, private v
     }
 
     suspend fun find(id: String) = dao.find(id)
+
+    suspend fun findByName(name: String): Member? {
+        return dao.findByName(name)
+    }
 }

@@ -107,4 +107,9 @@ class BookRepository @Inject constructor(private val api: BookApi, private val d
 
     // buat cek title sudah ada atau belum
     suspend fun existsByTitle(title: String) = dao.existsByTitle(title) > 0
+
+    //find by title
+    suspend fun findByTitle(title: String): Book? {
+        return dao.findByTitle(title)
+    }
 }

@@ -40,4 +40,7 @@ interface BookDao {
 
     @Query("SELECT COUNT(*) FROM book WHERE title = :title")
     suspend fun existsByTitle(title: String): Int
+
+    @Query("SELECT * FROM book WHERE title = :title LIMIT 1")
+    suspend fun findByTitle(title: String): Book?
 }

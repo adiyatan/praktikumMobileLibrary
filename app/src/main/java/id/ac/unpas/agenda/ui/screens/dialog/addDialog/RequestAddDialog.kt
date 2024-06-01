@@ -9,27 +9,30 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import java.util.UUID
-
-
+import androidx.hilt.navigation.compose.hiltViewModel
+import id.ac.unpas.agenda.models.Book
+import id.ac.unpas.agenda.models.BookRequest
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @Composable
-fun RequestAddDialog(onDismiss: () -> Unit, onSave: (BookViewModel) -> Unit) {
+fun RequestAddDialog(onDismiss: () -> Unit, onSave: (BookRequest) -> Unit) {
     val coroutineScope = rememberCoroutineScope()
-
-    data class BookViewModel(
-    val id: String,
-    val fullName: String,
-    val bookName: String,
-    val borrowingDate: Int,
-    val returnDate: Int
-)
+    val viewModel: BookRequestViewModel = hiltViewModel()
+    val bookViewModel: BookViewModel = hiltViewModel()
+    val memberViewModel: MemberViewModel = hiltViewModel()
 
     // Define state variables
     var fullName by remember { mutableStateOf("") }
     var bookName by remember { mutableStateOf("") }
-    var borrowingDate by remember { mutableStateOf("") }
-    var returnDate by remember { mutableStateOf("") }
+    var startDate by remember { mutableStateOf("") }
+    var endDate by remember { mutableStateOf("") }
     var errorMessage by remember { mutableStateOf<String?>(null) }
+
+    fun sanitizeInput(input: String): String {
+        return input.replace(Regex("[^A-Za-z0-9\\s]"), "")
+    }
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -39,26 +42,26 @@ fun RequestAddDialog(onDismiss: () -> Unit, onSave: (BookViewModel) -> Unit) {
                 Spacer(modifier = Modifier.height(8.dp))
                 TextField(
                     value = fullName,
-                    onValueChange = { fullName = it },
+                    onValueChange = { fullName = sanitizeInput(it) },
                     label = { Text("Nama Anggota") }
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 TextField(
                     value = bookName,
-                    onValueChange = { bookName = it },
+                    onValueChange = { bookName = sanitizeInput(it) },
                     label = { Text("Nama Buku") }
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 TextField(
-                    value = borrowingDate,
-                    onValueChange = { borrowingDate = it },
+                    value = startDate,
+                    onValueChange = { startDate = it },
                     label = { Text("Tanggal Peminjaman") },
                     keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 TextField(
-                    value = returnDate,
-                    onValueChange = { returnDate = it },
+                    value = endDate,
+                    onValueChange = { endDate = it },
                     label = { Text("Tanggal Pengembalian") },
                     keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
                 )
@@ -70,16 +73,33 @@ fun RequestAddDialog(onDismiss: () -> Unit, onSave: (BookViewModel) -> Unit) {
         },
         confirmButton = {
             Button(onClick = {
-                if (fullName.isBlank() || bookName.isBlank() || borrowingDate.isBlank() || returnDate.isBlank() || returnDate.toIntOrNull() == null) {
+                if (fullName.isBlank() || bookName.isBlank() || startDate.isBlank() || endDate.isBlank()) {
                     errorMessage = "Please fill all fields correctly."
                 } else {
-                    val book = BookViewModel(
-                        id = UUID.randomUUID().toString(),
-                        fullName = fullName,
-                        bookName = bookName,
-                        borrowingDate = borrowingDate.toInt(),
-                        returnDate = returnDate.toInt()
-                    )
+                    coroutineScope.launch {
+                        val book = bookViewModel.findByTitle(bookName)
+                        val member = memberViewModel.findByName(fullName)
+                        if (book != null && member != null) {
+                            val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", Locale.getDefault())
+                            val createdAt = sdf.format(Date())
+                            val updatedAt = sdf.format(Date())
+                            val status = "on loan"
+                            val bookRequest = BookRequest(
+                                id = UUID.randomUUID().toString(),
+                                library_book_id = book.id,
+                                library_member_id = member.id,
+                                start_date = startDate,
+                                end_date = endDate,
+                                status = status,
+                                created_at = createdAt,
+                                updated_at = updatedAt
+                            )
+                            onSave(bookRequest)
+                            onDismiss()
+                        } else {
+                            errorMessage = "Book not found. Please check the book name."
+                        }
+                    }
                 }
             }) {
                 Text("Save")
@@ -92,3 +112,5 @@ fun RequestAddDialog(onDismiss: () -> Unit, onSave: (BookViewModel) -> Unit) {
         }
     )
 }
+
+

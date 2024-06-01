@@ -37,4 +37,7 @@ interface MemberDao {
 
     @Delete
     suspend fun delete(item: Member)
+
+    @Query("SELECT * FROM member WHERE name = :name LIMIT 1")
+    suspend fun findByName(name: String): Member?
 }

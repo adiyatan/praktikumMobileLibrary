@@ -27,7 +27,7 @@ class BookRequestViewModel @Inject constructor(private val todoRepository: BookR
     val isDeleted: LiveData<Boolean> = _isDeleted
 
     private val _book: MutableLiveData<Boolean> = MutableLiveData(false)
-    val requests : LiveData<List<BookRequest>> = _book.switchMap {
+    val requests: LiveData<List<BookRequest>> = _book.switchMap {
         _isLoading.postValue(true)
         launchOnViewModelScope {
             todoRepository.loadItems(
@@ -42,16 +42,29 @@ class BookRequestViewModel @Inject constructor(private val todoRepository: BookR
         }
     }
 
-    suspend fun insert(id: String,
-                       library_book_id: String,
-                       library_member_id: String,
-                       start_date: String,
-                       end_date: String,
-                       status: String,
-                       created_at: String,
-                       updated_at: String) {
+    suspend fun insert(
+        id: String,
+        library_book_id: String,
+        library_member_id: String,
+        start_date: String,
+        end_date: String,
+        status: String,
+        created_at: String,
+        updated_at: String
+    ) {
         _isLoading.postValue(true)
-        todoRepository.insert(BookRequest(id, library_book_id, library_member_id, start_date, end_date, status, created_at, updated_at),
+        val bookRequest = BookRequest(
+            id,
+            library_book_id,
+            library_member_id,
+            start_date,
+            end_date,
+            status,
+            created_at,
+            updated_at
+        )
+        todoRepository.insert(
+            bookRequest,
             onSuccess = {
                 _isLoading.postValue(false)
                 _isDone.postValue(true)
@@ -59,22 +72,34 @@ class BookRequestViewModel @Inject constructor(private val todoRepository: BookR
             },
             onError = {
                 _isLoading.postValue(false)
-                _isDone.postValue(true)
-                _book.postValue(true)
+                Log.e("TodoViewModel", it)
             }
         )
     }
 
-    suspend fun update(id: String,
-                       library_book_id: String,
-                       library_member_id: String,
-                       start_date: String,
-                       end_date: String,
-                       status: String,
-                       created_at: String,
-                       updated_at: String) {
+    suspend fun update(
+        id: String,
+        library_book_id: String,
+        library_member_id: String,
+        start_date: String,
+        end_date: String,
+        status: String,
+        created_at: String,
+        updated_at: String
+    ) {
         _isLoading.postValue(true)
-        todoRepository.update(BookRequest(id, library_book_id, library_member_id, start_date, end_date, status, created_at, updated_at),
+        val bookRequest = BookRequest(
+            id,
+            library_book_id,
+            library_member_id,
+            start_date,
+            end_date,
+            status,
+            created_at,
+            updated_at
+        )
+        todoRepository.update(
+            bookRequest,
             onSuccess = {
                 _isLoading.postValue(false)
                 _isDone.postValue(true)
@@ -82,8 +107,7 @@ class BookRequestViewModel @Inject constructor(private val todoRepository: BookR
             },
             onError = {
                 _isLoading.postValue(false)
-                _isDone.postValue(true)
-                _book.postValue(true)
+                Log.e("TodoViewModel", it)
             }
         )
     }
@@ -96,13 +120,12 @@ class BookRequestViewModel @Inject constructor(private val todoRepository: BookR
                 _isDone.postValue(true)
                 _book.postValue(true)
                 _isDeleted.postValue(true)
+            },
+            onError = {
+                _isLoading.postValue(false)
+                Log.e("TodoViewModel", it)
             }
-        ) {
-            _isLoading.postValue(false)
-            _isDone.postValue(true)
-            _book.postValue(true)
-            _isDeleted.postValue(false)
-        }
+        )
     }
 
     suspend fun find(id: String) {
