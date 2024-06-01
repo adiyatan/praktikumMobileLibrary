@@ -103,18 +103,17 @@ fun BookEditDialog(item: Book, onDismiss: () -> Unit, onSave: (Book) -> Unit, on
                 }) {
                     Text("Save")
                 }
-                Spacer(modifier = Modifier.width(8.dp))
-                Button(onClick = {
-                    coroutineScope.launch {
-                        onDelete()
-                        onDismiss()
-                    }
-                }, colors = ButtonDefaults.buttonColors()) {
-                    Text("Delete")
-                }
             }
         },
         dismissButton = {
+            Button(onClick = {
+                coroutineScope.launch {
+                    onDelete()
+                    onDismiss()
+                }
+            }, colors = ButtonDefaults.buttonColors()) {
+                Text("Delete")
+            }
             Button(onClick = onDismiss) {
                 Text("Cancel")
             }

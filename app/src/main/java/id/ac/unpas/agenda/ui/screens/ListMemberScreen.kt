@@ -134,19 +134,26 @@ fun ListMemberScreen(modifier: Modifier = Modifier, onDelete: () -> Unit, onClic
     }
 
     if (showEditDialog && selectedMember != null) {
-        MemberEditDialog(item = selectedMember!!, onDismiss = { showEditDialog = false }) { updatedMember ->
-            // Handle saving the updated member
-            scope.launch {
-                viewModel.update(
-                    id = updatedMember.id,
-                    name = updatedMember.name,
-                    address = updatedMember.address,
-                    phone = updatedMember.phone,
-                    created_at = updatedMember.created_at,
-                    update_at = updatedMember.updated_at
-                )
+        MemberEditDialog(
+            item = selectedMember!!,
+            onSave = { member ->
+                scope.launch {
+                    viewModel.update(
+                        id = member.id,
+                        name = member.name,
+                        address = member.address,
+                        phone = member.phone,
+                        created_at = member.created_at,
+                        update_at = member.updated_at
+                    )
+                }
                 showEditDialog = false
-            }
-        }
+            },
+            onDelete = {
+                activeId.value = selectedMember!!.id
+                openDialog.value = true
+            },
+            onDismiss = { showEditDialog = false }
+        )
     }
 }

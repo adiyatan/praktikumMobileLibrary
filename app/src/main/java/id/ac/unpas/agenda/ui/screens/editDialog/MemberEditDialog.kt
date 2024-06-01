@@ -16,7 +16,7 @@ import java.util.Date
 import java.util.Locale
 
 @Composable
-fun MemberEditDialog(item: Member, onDismiss: () -> Unit, onSave: (Member) -> Unit) {
+fun MemberEditDialog(item: Member, onDismiss: () -> Unit, onSave: (Member) -> Unit, onDelete: () -> Unit) {
     val coroutineScope = rememberCoroutineScope()
     val viewModel: MemberViewModel = hiltViewModel()
 
@@ -90,6 +90,14 @@ fun MemberEditDialog(item: Member, onDismiss: () -> Unit, onSave: (Member) -> Un
             }
         },
         dismissButton = {
+            Button(onClick = {
+                coroutineScope.launch {
+                    onDelete()
+                    onDismiss()
+                }
+            }, colors = ButtonDefaults.buttonColors()) {
+                Text("Delete")
+            }
             Button(onClick = onDismiss) {
                 Text("Cancel")
             }
