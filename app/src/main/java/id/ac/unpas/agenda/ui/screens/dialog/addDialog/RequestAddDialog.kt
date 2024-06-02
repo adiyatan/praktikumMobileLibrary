@@ -34,6 +34,10 @@ fun RequestAddDialog(onDismiss: () -> Unit, onSave: (BookRequest) -> Unit) {
         return input.replace(Regex("[^A-Za-z0-9\\s]"), "")
     }
 
+    fun capitalizeWords(input: String): String {
+        return input.split(" ").joinToString(" ") { it.lowercase().replaceFirstChar { char -> char.uppercase() } }
+    }
+
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text("Form Peminjaman") },
@@ -42,13 +46,13 @@ fun RequestAddDialog(onDismiss: () -> Unit, onSave: (BookRequest) -> Unit) {
                 Spacer(modifier = Modifier.height(8.dp))
                 TextField(
                     value = fullName,
-                    onValueChange = { fullName = sanitizeInput(it) },
+                    onValueChange = { fullName = capitalizeWords(sanitizeInput(it)) },
                     label = { Text("Nama Anggota") }
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 TextField(
                     value = bookName,
-                    onValueChange = { bookName = sanitizeInput(it) },
+                    onValueChange = { bookName = capitalizeWords(sanitizeInput(it)) },
                     label = { Text("Nama Buku") }
                 )
                 Spacer(modifier = Modifier.height(8.dp))

@@ -33,7 +33,7 @@ fun BookAddDialog(onDismiss: () -> Unit, onSave: (Book) -> Unit) {
     }
 
     // Function to capitalize each word
-    fun formatTitle(input: String): String {
+    fun capitalizeWords(input: String): String {
         return input.split(" ").joinToString(" ") { it.lowercase().replaceFirstChar { char -> char.uppercase() } }
     }
 
@@ -45,13 +45,13 @@ fun BookAddDialog(onDismiss: () -> Unit, onSave: (Book) -> Unit) {
                 Spacer(modifier = Modifier.height(8.dp))
                 TextField(
                     value = title,
-                    onValueChange = { title = sanitizeInput(it) },
+                    onValueChange = { title = capitalizeWords(sanitizeInput(it)) },
                     label = { Text("Judul Buku") }
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 TextField(
                     value = author,
-                    onValueChange = { author = sanitizeInput(it) },
+                    onValueChange = { author = capitalizeWords(sanitizeInput(it)) },
                     label = { Text("Penulis") }
                 )
                 Spacer(modifier = Modifier.height(8.dp))
@@ -80,8 +80,7 @@ fun BookAddDialog(onDismiss: () -> Unit, onSave: (Book) -> Unit) {
                     if (title.isBlank() || author.isBlank() || releasedDate.isBlank() || stock.isBlank() || stock.toIntOrNull() == null) {
                         errorMessage = "Please fill all fields correctly."
                     } else {
-                        val formattedTitle = formatTitle(title)
-                        if (viewModel.existsByTitle(formattedTitle)) {
+                        if (viewModel.existsByTitle(title)) {
                             errorMessage = "Nama buku sudah ada."
                         } else {
                             val id = UUID.randomUUID().toString()
@@ -90,7 +89,7 @@ fun BookAddDialog(onDismiss: () -> Unit, onSave: (Book) -> Unit) {
                             val updatedAt = sdf.format(Date())
                             val book = Book(
                                 id = id,
-                                title = formattedTitle,
+                                title = title,
                                 author = author,
                                 released_date = releasedDate,
                                 stock = stock.toInt(),
@@ -99,7 +98,7 @@ fun BookAddDialog(onDismiss: () -> Unit, onSave: (Book) -> Unit) {
                             )
                             viewModel.insert(
                                 id = id,
-                                title = formattedTitle,
+                                title = title,
                                 author = author,
                                 released_date = releasedDate,
                                 stock = stock.toInt(),
