@@ -7,12 +7,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,6 +27,9 @@ import id.ac.unpas.agenda.ui.theme.Blue40
 import id.ac.unpas.agenda.ui.theme.White
 import kotlinx.coroutines.launch
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.lifecycle.viewModelScope
+import androidx.navigation.compose.rememberNavController
 import id.ac.unpas.agenda.models.Member
 
 @Composable
@@ -45,12 +43,16 @@ fun ListBookRequestScreen(
     val search = remember { mutableStateOf("") }
     val bookViewModel: BookViewModel = hiltViewModel()
     val memberViewModel: MemberViewModel = hiltViewModel()
+    val navController = rememberNavController()
 
     val list: List<BookRequest> by viewModel.requests.observeAsState(listOf())
     val title = remember { mutableStateOf("TODO") }
     val openDialog = remember { mutableStateOf(false) }
     val activeId = remember { mutableStateOf("") }
     val deleting = remember { mutableStateOf(false) }
+
+    var selectedBookRequest by remember { mutableStateOf<BookRequest?>(null) }
+    var showEditDialog by remember { mutableStateOf(false) }
 
     Column(modifier = modifier.fillMaxWidth()) {
         Box(
@@ -121,7 +123,8 @@ fun ListBookRequestScreen(
                         qty = 1,
                         date = item.start_date
                     ) {
-                        onClick(item.library_book_id)
+                        selectedBookRequest = item
+                        showEditDialog = true
                     }
                 }
             }
@@ -152,5 +155,34 @@ fun ListBookRequestScreen(
             deleting.value = false
             onDelete()
         }
+    }
+
+    if (showEditDialog && selectedBookRequest != null) {
+        RequestEditDialog(
+            item = selectedBookRequest!!,
+            onDismiss = {
+                showEditDialog = false
+            },
+            onSave = { bookRequest ->
+                viewModel.viewModelScope.launch {
+                    viewModel.update(
+                        id = bookRequest.id,
+                        library_book_id = bookRequest.library_book_id,
+                        library_member_id = bookRequest.library_member_id,
+                        start_date = bookRequest.start_date,
+                        end_date = bookRequest.end_date,
+                        status = bookRequest.status,
+                        created_at = bookRequest.created_at,
+                        updated_at = bookRequest.updated_at
+                    )
+                    showEditDialog = false
+                }
+            },
+            onDelete = {
+                openDialog.value = true
+                activeId.value = selectedBookRequest!!.id
+                deleting.value = true
+            }
+        )
     }
 }
