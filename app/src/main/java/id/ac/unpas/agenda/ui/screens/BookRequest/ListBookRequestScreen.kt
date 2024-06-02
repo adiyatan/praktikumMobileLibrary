@@ -31,6 +31,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.compose.rememberNavController
 import id.ac.unpas.agenda.models.Member
+import id.ac.unpas.agenda.ui.composables.BookRequestCard
 
 @Composable
 fun ListBookRequestScreen(
@@ -117,11 +118,11 @@ fun ListBookRequestScreen(
                 }
 
                 book.value?.let { book ->
-                    BookCard(
+                    BookRequestCard(
                         name1 = book.title,
                         name2 = member.value?.name ?: "Unknown",
-                        qty = 1,
-                        date = item.start_date
+                        status = item.status,
+                        date = item.end_date
                     ) {
                         selectedBookRequest = item
                         showEditDialog = true
