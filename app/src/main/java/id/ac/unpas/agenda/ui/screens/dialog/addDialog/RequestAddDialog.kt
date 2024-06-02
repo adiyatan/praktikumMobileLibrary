@@ -111,7 +111,7 @@ fun RequestAddDialog(onDismiss: () -> Unit, onSave: (BookRequest) -> Unit) {
                             onSave(bookRequest)
                             onDismiss()
                         } else {
-                            errorMessage = "Book not found. Please check the book name."
+                            errorMessage = "Book & Member not found. Please check the book and member name."
                         }
                     }
                 }
