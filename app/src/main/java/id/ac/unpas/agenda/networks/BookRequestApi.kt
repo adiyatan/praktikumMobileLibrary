@@ -17,14 +17,14 @@ interface BookRequestApi {
     @GET("book-request")
     suspend fun findAll(): ApiResponse<BookRequestGetResponse>
 
-    @POST("todo")
+    @POST("book-request")
     @Headers("Content-Type: application/json")
     suspend fun insert(@Body todo: BookRequest): ApiResponse<BookPostResponse>
 
-    @PUT("todo/{id}")
+    @PUT("book-request/{id}")
     @Headers("Content-Type: application/json")
     suspend fun update(@Path("id") id: String, @Body todo: BookRequest): ApiResponse<BookPostResponse>
 
-    @DELETE("todo/{id}")
+    @DELETE("book-request/{id}")
     suspend fun delete(@Path("id") id: String): ApiResponse<BookDeleteResponse>
 }
