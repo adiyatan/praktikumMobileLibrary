@@ -68,9 +68,9 @@ class MemberViewModel @Inject constructor(private val todoRepository: MemberRepo
                        address: String,
                        phone: String,
                        created_at: String,
-                       update_at: String) {
+                       updated_at: String) {
         _isLoading.postValue(true)
-        todoRepository.update(Member(id, name, address, phone, created_at, update_at),
+        todoRepository.update(Member(id, name, address, phone, created_at, updated_at),
             onSuccess = {
                 _isLoading.postValue(false)
                 _isDone.postValue(true)

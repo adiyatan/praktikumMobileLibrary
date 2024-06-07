@@ -83,7 +83,7 @@ fun MemberEditDialog(item: Member, onDismiss: () -> Unit, onSave: (Member) -> Un
                             address = updatedMember.address,
                             phone = updatedMember.phone,
                             created_at = updatedMember.created_at,
-                            update_at = updatedMember.updated_at
+                            updated_at = updatedMember.updated_at
                         )
                         onSave(updatedMember)
                         onDismiss()

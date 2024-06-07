@@ -65,17 +65,15 @@ fun ListMemberScreen(modifier: Modifier = Modifier, onDelete: () -> Unit, onClic
             OutlinedTextField(
                 value = search.value,
                 onValueChange = { search.value = it },
-                placeholder = { Text(text = "Cari Anggota", color = Color.Gray) },
-                modifier = Modifier
-                    .fillMaxWidth(0.9f)
-                    .background(color = White),
+                placeholder = { Text(text = "Cari Buku", color = Color.Gray) },
+                modifier = roundedOutlinedTextFieldModifier(12.dp).background(color = White),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = White,
                     unfocusedBorderColor = White,
                 ),
                 shape = RoundedCornerShape(12.dp)
             )
-            Spacer(modifier = Modifier.width(8.dp))
+            Spacer(modifier = Modifier.width(36.dp))
             Box(
                 modifier = Modifier
                     .size(40.dp)
@@ -144,7 +142,7 @@ fun ListMemberScreen(modifier: Modifier = Modifier, onDelete: () -> Unit, onClic
                         address = member.address,
                         phone = member.phone,
                         created_at = member.created_at,
-                        update_at = member.updated_at
+                        updated_at = member.updated_at
                     )
                 }
                 showEditDialog = false

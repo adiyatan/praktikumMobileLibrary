@@ -17,14 +17,14 @@ interface MemberApi {
     @GET("member")
     suspend fun findAll(): ApiResponse<MemberGetResponse>
 
-    @POST("todo")
+    @POST("member")
     @Headers("Content-Type: application/json")
     suspend fun insert(@Body todo: Member): ApiResponse<BookPostResponse>
 
-    @PUT("todo/{id}")
+    @PUT("member/{id}")
     @Headers("Content-Type: application/json")
     suspend fun update(@Path("id") id: String, @Body todo: Member): ApiResponse<BookPostResponse>
 
-    @DELETE("todo/{id}")
+    @DELETE("member/{id}")
     suspend fun delete(@Path("id") id: String): ApiResponse<BookDeleteResponse>
 }
