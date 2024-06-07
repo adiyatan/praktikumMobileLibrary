@@ -69,6 +69,17 @@ fun RequestEditDialog(
         return input.split(" ").joinToString(" ") { it.lowercase().replaceFirstChar { char -> char.uppercase() } }
     }
 
+    fun convertDateFormat(date: String): String {
+        return try {
+            val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+            val parsedDate: Date? = sdf.parse(date)
+            val outputSdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            outputSdf.format(parsedDate!!)
+        } catch (e: Exception) {
+            ""
+        }
+    }
+
     var expanded by remember { mutableStateOf(false) }
     val statusOptions = listOf("on loan", "returned", "lost", "damaged")
 
@@ -94,14 +105,14 @@ fun RequestEditDialog(
                 Spacer(modifier = Modifier.height(8.dp))
                 TextField(
                     value = startDate,
-                    onValueChange = { startDate = it },
+                    onValueChange = { startDate = convertDateFormat(it) },
                     label = { Text("Tanggal Peminjaman") },
                     keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 TextField(
                     value = endDate,
-                    onValueChange = { endDate = it },
+                    onValueChange = { endDate = convertDateFormat(it) },
                     label = { Text("Tanggal Pengembalian") },
                     keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
                 )

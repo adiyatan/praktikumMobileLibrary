@@ -37,6 +37,18 @@ fun BookAddDialog(onDismiss: () -> Unit, onSave: (Book) -> Unit) {
         return input.split(" ").joinToString(" ") { it.lowercase().replaceFirstChar { char -> char.uppercase() } }
     }
 
+    // Function to convert date format from dd-MM-yyyy to yyyy-MM-dd
+    fun convertDateFormat(date: String): String {
+        return try {
+            val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+            val parsedDate: Date? = sdf.parse(date)
+            val outputSdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            outputSdf.format(parsedDate!!)
+        } catch (e: Exception) {
+            ""
+        }
+    }
+
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text("Tambah Buku") },
@@ -57,7 +69,7 @@ fun BookAddDialog(onDismiss: () -> Unit, onSave: (Book) -> Unit) {
                 Spacer(modifier = Modifier.height(8.dp))
                 TextField(
                     value = releasedDate,
-                    onValueChange = { releasedDate = sanitizeInput(it) },
+                    onValueChange = { releasedDate = it },
                     label = { Text("Tahun Terbit") },
                     keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
                 )
@@ -87,26 +99,31 @@ fun BookAddDialog(onDismiss: () -> Unit, onSave: (Book) -> Unit) {
                             val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", Locale.getDefault())
                             val createdAt = sdf.format(Date())
                             val updatedAt = sdf.format(Date())
-                            val book = Book(
-                                id = id,
-                                title = title,
-                                author = author,
-                                released_date = releasedDate,
-                                stock = stock.toInt(),
-                                created_at = createdAt,
-                                updated_at = updatedAt
-                            )
-                            viewModel.insert(
-                                id = id,
-                                title = title,
-                                author = author,
-                                released_date = releasedDate,
-                                stock = stock.toInt(),
-                                created_at = createdAt,
-                                update_at = updatedAt
-                            )
-                            onSave(book)
-                            onDismiss()
+                            val convertedDate = convertDateFormat(releasedDate)
+                            if (convertedDate.isEmpty()) {
+                                errorMessage = "Tanggal terbit tidak valid."
+                            } else {
+                                val book = Book(
+                                    id = id,
+                                    title = title,
+                                    author = author,
+                                    released_date = convertedDate,
+                                    stock = stock.toInt(),
+                                    created_at = createdAt,
+                                    updated_at = updatedAt
+                                )
+                                viewModel.insert(
+                                    id = id,
+                                    title = title,
+                                    author = author,
+                                    released_date = convertedDate,
+                                    stock = stock.toInt(),
+                                    created_at = createdAt,
+                                    update_at = updatedAt
+                                )
+                                onSave(book)
+                                onDismiss()
+                            }
                         }
                     }
                 }

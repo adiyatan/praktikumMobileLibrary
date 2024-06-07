@@ -38,6 +38,17 @@ fun BookEditDialog(item: Book, onDismiss: () -> Unit, onSave: (Book) -> Unit, on
         return input.split(" ").joinToString(" ") { it.lowercase().replaceFirstChar { char -> char.uppercase() } }
     }
 
+    fun convertDateFormat(date: String): String {
+        return try {
+            val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+            val parsedDate: Date? = sdf.parse(date)
+            val outputSdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            outputSdf.format(parsedDate!!)
+        } catch (e: Exception) {
+            ""
+        }
+    }
+
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text("Edit Buku") },
@@ -58,7 +69,7 @@ fun BookEditDialog(item: Book, onDismiss: () -> Unit, onSave: (Book) -> Unit, on
                 Spacer(modifier = Modifier.height(8.dp))
                 TextField(
                     value = releasedDate,
-                    onValueChange = { setReleasedDate(sanitizeInput(it)) },
+                    onValueChange = { setReleasedDate(convertDateFormat(it)) },
                     label = { Text("Tahun Terbit") },
                     keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
                 )
